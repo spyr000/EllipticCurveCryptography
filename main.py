@@ -21,7 +21,6 @@ if __name__ == '__main__':
     print('sender', sender.e.points)
     print('receiver', receiver.e.points)
     c = sender.encode('бедалже', receiver.open_key)
-    # cr.e.general_point = cr.g[2]
     receiver.decode(c, sender.open_key)
     ax = plt.gca()
     ax.set_facecolor('black')

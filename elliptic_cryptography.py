@@ -11,7 +11,7 @@ from alphabet import get_char, LENGTH
 class Cryptographer:
     def __init__(self, e, max_prime_index=100):
         self.e = e
-        self.closed_key = random.randint(1, prime - 1)
+        self.closed_key = random.randint(1, e.p - 1)
         # self.closed_key = 5
 
         # while len(self.e.points) < LENGTH:
@@ -110,7 +110,7 @@ class Cryptographer:
                 arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0'),
                 color='white'
             )
-            endregion
+            # endregion
         print('closed key',self.closed_key)
         print('g len',len(self.g))
         self.open_key = self.g[self.closed_key % len(self.g) - 1]
