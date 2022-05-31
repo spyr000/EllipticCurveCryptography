@@ -1,15 +1,18 @@
 import random
 
-import numpy as np
-import sympy
-import random
-from elliptic_curve import EllipticCurve, Point
 import matplotlib.pyplot as plt
-from alphabet import get_char, LENGTH
+import numpy as np
+
+from alphabet import get_char
+from elliptic_curve import Point
 
 
 class Cryptographer:
-    def __init__(self, e, max_prime_index=100):
+    def __init__(self, e):
+        self.point_to_num = None
+        self.reverse_dict = None
+        self.g = None
+        self.open_key = None
         self.e = e
         self.closed_key = random.randint(1, e.p - 1)
         # self.closed_key = 5
@@ -21,7 +24,7 @@ class Cryptographer:
         #     self.e = EllipticCurve(a, b, prime)
         self.dictionary = {}
 
-    def generate_path(self,ind= None):
+    def generate_path(self, ind=None):
         i = 1
         # выбираем случайно генеральную точку из всех точек эллиптической кривой
         plt.close()
@@ -30,12 +33,12 @@ class Cryptographer:
             index = random.randint(0, len(self.e.points) - 1)
         else:
             index = ind
-        print('general point', index)
+        print('general point', str(index)+'G')
         self.e.set_general_point(index)
         point = self.e.general_point
         self.dictionary.update({get_char(i): point.get_tuple()})
         self.g = [point]
-        print(get_char(i), point)
+        print(str(i)+'G',get_char(i), point)
         point = point + point
 
         # если 2G = G выбираем другую генеральную точку из всех точек эллиптической кривой
@@ -46,7 +49,7 @@ class Cryptographer:
             else:
                 index = ind
             # index = 0
-            print('general point', index)
+            print('general point', index+'G')
             self.e.set_general_point(index)
             self.dictionary = {}
             point = self.e.general_point
@@ -81,7 +84,7 @@ class Cryptographer:
         )
         plt.scatter(point.x, point.y)
         # endregion
-        print(get_char(i), point)
+        print(str(i)+'G',get_char(i), point)
         color_val = 0.1
 
         while not point.get_tuple() == (0, 0):
@@ -94,8 +97,12 @@ class Cryptographer:
             point = point + self.e.general_point
             self.g.append(point)
             # if not point == self.e.general_point:
-            self.dictionary.update({get_char(i): point.get_tuple()})
-            print(get_char(i), point)
+            if not point.get_tuple() == (0, 0):
+                self.dictionary.update({get_char(i): point.get_tuple()})
+                print(str(i)+'G',get_char(i), point)
+            else:
+                self.dictionary.update({' ': point.get_tuple()})
+                print(' ', point)
             # region plot
             line = plt.plot((p_last.x, point.x), (p_last.y, point.y),
                             color=((0.7 - color_val) % 1, (0.1 - color_val) % 1, color_val % 1))[0]
@@ -111,8 +118,8 @@ class Cryptographer:
                 color='white'
             )
             # endregion
-        print('closed key',self.closed_key)
-        print('g len',len(self.g))
+        print('closed key', self.closed_key)
+        print('g len', len(self.g))
         self.open_key = self.g[self.closed_key % len(self.g) - 1]
         # составляем словарь точка - номер
         self.point_to_num = dict(zip([i.get_tuple() for i in self.g], np.arange(1, len(self.g) + 1)))
@@ -151,8 +158,6 @@ class Cryptographer:
             p_c = self.g[num % g_len - 1]
             # пишем в шифр букву соответствующую точке вычисленной выше
             cipher += self.reverse_dict[p_c.get_tuple()]
-        print(cipher)
-
         return cipher
 
     def decode(self, cipher, open_key: Point):
@@ -169,7 +174,6 @@ class Cryptographer:
             p_m = self.g[num % g_len - 1]
 
             message += self.reverse_dict[p_m.get_tuple()]
-        print(message)
         return message
 
 
@@ -204,6 +208,3 @@ def add_arrow(line, position=None, direction='right', size=15, color=None):
                        arrowprops=dict(arrowstyle="->", color=color),
                        size=size
                        )
-
-
-

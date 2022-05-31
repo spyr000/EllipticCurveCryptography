@@ -1,9 +1,11 @@
-from elliptic_cryptography import Cryptographer
-from elliptic_curve import EllipticCurve, Point
 import random
-import sympy
-from alphabet import LENGTH
+
 import matplotlib.pyplot as plt
+import sympy
+
+from alphabet import LENGTH
+from elliptic_cryptography import Cryptographer
+from elliptic_curve import EllipticCurve
 
 if __name__ == '__main__':
     # prime = 11
@@ -20,8 +22,12 @@ if __name__ == '__main__':
     receiver.generate_path(ind=index)
     print('sender', sender.e.points)
     print('receiver', receiver.e.points)
-    c = sender.encode('бедалже', receiver.open_key)
-    receiver.decode(c, sender.open_key)
+    message = 'бандерлог джонникэш'
+    print('message:', message)
+    cipher = sender.encode(message, receiver.open_key)
+    print('cipher:', cipher)
+    decoded_message = receiver.decode(cipher, sender.open_key)
+    print('decoded message:', decoded_message)
     ax = plt.gca()
     ax.set_facecolor('black')
     plt.grid()
