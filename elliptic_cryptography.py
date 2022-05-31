@@ -33,12 +33,12 @@ class Cryptographer:
             index = random.randint(0, len(self.e.points) - 1)
         else:
             index = ind
-        print('general point', str(index)+'G')
+        print('general point', str(index) + 'G')
         self.e.set_general_point(index)
         point = self.e.general_point
         self.dictionary.update({get_char(i): point.get_tuple()})
         self.g = [point]
-        print(str(i)+'G',get_char(i), point)
+        print(str(i) + 'G', get_char(i), point)
         point = point + point
 
         # если 2G = G выбираем другую генеральную точку из всех точек эллиптической кривой
@@ -49,7 +49,7 @@ class Cryptographer:
             else:
                 index = ind
             # index = 0
-            print('general point', index+'G')
+            print('general point', index + 'G')
             self.e.set_general_point(index)
             self.dictionary = {}
             point = self.e.general_point
@@ -62,7 +62,7 @@ class Cryptographer:
         self.g.append(point)
 
         # region plot
-        plt.rcParams['figure.figsize'] = [20, 10]
+        plt.rcParams['figure.figsize'] = [10, 10]
         line = plt.plot((self.e.general_point.x, point.x), (self.e.general_point.y, point.y), color=(0.1, 0.1, 0.1))[0]
         add_arrow(line)
 
@@ -84,7 +84,7 @@ class Cryptographer:
         )
         plt.scatter(point.x, point.y)
         # endregion
-        print(str(i)+'G',get_char(i), point)
+        print(str(i) + 'G', get_char(i), point)
         color_val = 0.1
 
         while not point.get_tuple() == (0, 0):
@@ -99,7 +99,7 @@ class Cryptographer:
             # if not point == self.e.general_point:
             if not point.get_tuple() == (0, 0):
                 self.dictionary.update({get_char(i): point.get_tuple()})
-                print(str(i)+'G',get_char(i), point)
+                print(str(i) + 'G', get_char(i), point)
             else:
                 self.dictionary.update({' ': point.get_tuple()})
                 print(' ', point)
@@ -118,8 +118,6 @@ class Cryptographer:
                 color='white'
             )
             # endregion
-        print('closed key', self.closed_key)
-        print('g len', len(self.g))
         self.open_key = self.g[self.closed_key % len(self.g) - 1]
         # составляем словарь точка - номер
         self.point_to_num = dict(zip([i.get_tuple() for i in self.g], np.arange(1, len(self.g) + 1)))
@@ -127,7 +125,6 @@ class Cryptographer:
         self.reverse_dict = {}
         for k, v in self.dictionary.items():
             self.reverse_dict.update({v: k})
-        print('reversed dict', end=' ')
         for k, v in self.reverse_dict.items():
             print(f'{k}: {v}', end=' ')
 
@@ -138,12 +135,9 @@ class Cryptographer:
         #     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         #     plt.figure().clear()
         #     self.generate_path()
-        print('dictionary', self.dictionary)
         return index
 
     def encode(self, message: str, open_key: Point):
-        print('point_to_num', self.point_to_num)
-        print('g_list', self.g)
         cipher = ''
         open_key_num = self.point_to_num[open_key.get_tuple()]
         # n * P
@@ -165,12 +159,9 @@ class Cryptographer:
         # self.closed_key = 9
         open_key_num = self.point_to_num[open_key.get_tuple()]
         k = self.closed_key * open_key_num
-        # print('k', k)
         g_len = len(self.g)
         for sym in cipher:
             num = self.point_to_num[self.dictionary[sym]] - k
-            # print('num', self.point_to_num[self.dictionary[sym]])
-            # print('index', num % g_len)
             p_m = self.g[num % g_len - 1]
 
             message += self.reverse_dict[p_m.get_tuple()]

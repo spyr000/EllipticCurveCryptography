@@ -73,7 +73,7 @@ class Point:
             return Point((x_3g, y_2g), self.elliptic_curve)
 
     def get_tuple(self):
-        return (self.x, self.y)
+        return self.x, self.y
 
     def __str__(self):
         return f'({self.x}, {self.y})'

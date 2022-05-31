@@ -15,14 +15,18 @@ if __name__ == '__main__':
     prime = sympy.prime(random.randint(sympy.nextprime(LENGTH), max_prime_index))
     a = random.randint(0, prime - 1)
     b = random.randint(0, prime - 1)
+
     elliptic_curve = EllipticCurve(a, b, prime)
     sender = Cryptographer(elliptic_curve)
     receiver = Cryptographer(elliptic_curve)
     index = sender.generate_path()
     receiver.generate_path(ind=index)
+
+    print(f'p = {prime}, a = {a}, b = {b}, starting point = {index}G')
     print('sender', sender.e.points)
     print('receiver', receiver.e.points)
-    message = 'бандерлог джонникэш'
+    # message = 'бандерлог джонникэш'
+    message = input('Введите сообщение:')
     print('message:', message)
     cipher = sender.encode(message, receiver.open_key)
     print('cipher:', cipher)

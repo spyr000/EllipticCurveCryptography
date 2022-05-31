@@ -1,6 +1,7 @@
 LENGTH = 33
 ZERO = 1071
 
+
 def get_char(i):
     if i < 7:
         return chr(ZERO + i)
@@ -11,6 +12,7 @@ def get_char(i):
             return chr(ZERO + i)
         else:
             return chr(ZERO + i - 1)
+
 
 def get_num(char):
     sym_num = ord(char)
